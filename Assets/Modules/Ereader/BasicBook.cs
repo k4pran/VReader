@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 
 namespace Ereader{
-    public class BasicBook : Book{
+    public class BasicBook : Book {
         
         private string bookPath;
         private List<Page> pages;
@@ -61,7 +61,7 @@ namespace Ereader{
             int lineNum = 0;
             int pageNum = 1;
             GameObject gameObj = new GameObject("page" + pageNum);
-            TextMeshPro tmp = gameObj.AddComponent<TextMeshPro>();
+            TextMeshProUGUI tmp = gameObj.AddComponent<TextMeshProUGUI>();
             foreach(string line in lines){
 
                 sb.Append(line);
@@ -69,7 +69,7 @@ namespace Ereader{
 
                 if (lineNum == linesPerPage) {
                     gameObj = new GameObject("page" + pageNum);
-                    tmp = gameObj.AddComponent<TextMeshPro>();
+                    tmp = gameObj.AddComponent<TextMeshProUGUI>();
                     TMP_TextEventHandler textHandler = gameObj.AddComponent<TMP_TextEventHandler>();
                     AddPage(ConstructPage(tmp, textHandler, "page" + pageNum, pageNum, sb.ToString()));
                     pageNum++;
@@ -79,7 +79,7 @@ namespace Ereader{
                 lineNum++;
             }
         }
-        protected Page ConstructPage(TextMeshPro tmp, TMP_TextEventHandler textHandler, string objName, int pageNum, string text){
+        protected Page ConstructPage(TextMeshProUGUI tmp, TMP_TextEventHandler textHandler, string objName, int pageNum, string text){
             Page page = new Page(tmp, textHandler, objName, pageNum);
             Vector2 preferredValues = tmp.GetPreferredValues(text);
             page.PreferredVals = preferredValues;

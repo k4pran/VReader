@@ -28,7 +28,7 @@ namespace Ereader{
         public new void LoadBook(){
                         
             GameObject gameObj = new GameObject("dummy_page");
-            TextMeshPro tmp = gameObj.AddComponent<TextMeshPro>();
+            TextMeshProUGUI tmp = gameObj.AddComponent<TextMeshProUGUI>();
             tmp.text = " ";
             tmp.ForceMeshUpdate();
 
@@ -57,14 +57,14 @@ namespace Ereader{
                 }
 
                 gameObj = new GameObject("page" + page.PageNumber);
-                tmp = gameObj.AddComponent<TextMeshPro>();
+                tmp = gameObj.AddComponent<TextMeshProUGUI>();
                 TMP_TextEventHandler textHandler = gameObj.AddComponent<TMP_TextEventHandler>();
                 AddPage(ConstructPage(tmp, textHandler, "page" + page.PageNumber, page.PageNumber, sb.ToString()));
                 sb = new StringBuilder();
             }
         }
 
-        private void DetermineScaledDims(TextMeshPro dummyPage, LineMetrics line){
+        private void DetermineScaledDims(TextMeshProUGUI dummyPage, LineMetrics line){
             float widthProportion  =  bookMetrics.LineWidthProportion(line);
             float heightProportion =  bookMetrics.LineHeightProportion(line);
             
@@ -79,7 +79,7 @@ namespace Ereader{
             scaleFactorH = heightProportion / tmpHeightProportion;
         }
         
-        private new Page ConstructPage(TextMeshPro tmp, TMP_TextEventHandler textHandler, string objName, int pageNum, string text){
+        private new Page ConstructPage(TextMeshProUGUI tmp, TMP_TextEventHandler textHandler, string objName, int pageNum, string text){
             Page page = new Page(tmp, textHandler, objName, pageNum);
             page.Tmp.overflowMode = TextOverflowModes.Overflow;
             page.PreferredVals = new Vector2(bookMetrics.PageMaxWidth, bookMetrics.PageMaxHeight);
