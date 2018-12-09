@@ -1,6 +1,4 @@
-﻿using System;
-using Ereader;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 public class DynamicPageController : MonoBehaviour {
@@ -18,7 +16,7 @@ public class DynamicPageController : MonoBehaviour {
     }
     
     public void AddPaper(TextMeshProUGUI front, TextMeshProUGUI back){
-
+        
         int pageNum = bookCurlWrapper.papers.Length * 2;
         
         GameObject pagePrefab = (GameObject)Resources.Load("prefabs/PageBlank", typeof(GameObject));

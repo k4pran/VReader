@@ -29,21 +29,7 @@
             <e p="BasicBook.cs" t="Include" />
             <e p="Book.cs" t="Include" />
             <e p="BookLoader.cs" t="Include" />
-            <e p="BookMetrics" t="Include">
-              <e p="BookMetrics.cs" t="Include" />
-              <e p="CharMetrics.cs" t="Include" />
-              <e p="ChunkMetrics.cs" t="Include" />
-              <e p="Color.cs" t="Include" />
-              <e p="ImageMetrics.cs" t="Include" />
-              <e p="LineMetrics.cs" t="Include" />
-              <e p="PageMetrics.cs" t="Include" />
-              <e p="Properties" t="Include">
-                <e p="AssemblyInfo.cs" t="Include" />
-              </e>
-              <e p="Rect.cs" t="Include" />
-              <e p="Styler.cs" t="Include" />
-              <e p="WordMetrics.cs" t="Include" />
-            </e>
+            <e p="EReaderBridge.cs" t="Include" />
             <e p="Page.cs" t="Include" />
             <e p="PageControl.cs" t="Include" />
             <e p="PdfBook.cs" t="Include" />
@@ -53,8 +39,28 @@
           <e p="JsonDotNet" t="Include">
             <e p="link.xml" t="Include" />
           </e>
+          <e p="PdfMetrics" t="Include">
+            <e p="BookMetrics.cs" t="Include" />
+            <e p="CharMetrics.cs" t="Include" />
+            <e p="ChunkMetrics.cs" t="Include" />
+            <e p="Color.cs" t="Include" />
+            <e p="ImageMetrics.cs" t="Include" />
+            <e p="LineMetrics.cs" t="Include" />
+            <e p="PageMetrics.cs" t="Include" />
+            <e p="Properties" t="Include">
+              <e p="AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="Rect.cs" t="Include" />
+            <e p="Styler.cs" t="Include" />
+            <e p="WordMetrics.cs" t="Include" />
+          </e>
           <e p="Wiki" t="Include">
             <e p="Wiki.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Resources" t="Include">
+          <e p="Books" t="Include">
+            <e p="dracula.txt" t="Include" />
           </e>
         </e>
         <e p="scripts" t="Include">
