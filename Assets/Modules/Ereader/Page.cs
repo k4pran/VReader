@@ -16,11 +16,13 @@ namespace Ereader{
         public Page(TextMeshProUGUI tmp, TMP_TextEventHandler textHandler, string objName, int pageNum){
             this.tmp = tmp;
             this.tmp.enableAutoSizing = true;
+            this.tmp.fontSizeMin = 12;
             this.tmp.color = Color.black;
             this.textHandler = textHandler;
             this.objName = objName;
             this.pageNum = pageNum;
             
+            Disable();
             SetHandlers();
         }
 
