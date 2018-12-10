@@ -23,7 +23,6 @@ namespace Ereader{
             this.pageNum = pageNum;
             
             Disable();
-            SetHandlers();
         }
 
         private void SetHandlers(){

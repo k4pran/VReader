@@ -60,6 +60,16 @@
     <Compile Include="Assets\Book-Page Curl Pro\Scripts\BookPro.cs" />
     <Compile Include="Assets\Book-Page Curl Pro\Scripts\PageFlipper.cs" />
     <Compile Include="Assets\Book-Page Curl Pro\Scripts\Tween.cs" />
+    <Compile Include="Assets\Modules\Dictionary\Dictionary.cs" />
+    <Compile Include="Assets\Modules\Ereader\BasicBook.cs" />
+    <Compile Include="Assets\Modules\Ereader\Book.cs" />
+    <Compile Include="Assets\Modules\Ereader\BookLoader.cs" />
+    <Compile Include="Assets\Modules\Ereader\EReaderBridge.cs" />
+    <Compile Include="Assets\Modules\Ereader\Page.cs" />
+    <Compile Include="Assets\Modules\Ereader\PageControl.cs" />
+    <Compile Include="Assets\Modules\Ereader\PdfBook.cs" />
+    <Compile Include="Assets\Modules\Ereader\TMP_TextEventHandler.cs" />
+    <Compile Include="Assets\Modules\Ereader\TMP_WordFocusHandler.cs" />
     <Compile Include="Assets\Modules\PdfMetrics\BookMetrics.cs" />
     <Compile Include="Assets\Modules\PdfMetrics\CharMetrics.cs" />
     <Compile Include="Assets\Modules\PdfMetrics\ChunkMetrics.cs" />
@@ -71,16 +81,6 @@
     <Compile Include="Assets\Modules\PdfMetrics\Rect.cs" />
     <Compile Include="Assets\Modules\PdfMetrics\Styler.cs" />
     <Compile Include="Assets\Modules\PdfMetrics\WordMetrics.cs" />
-    <Compile Include="Assets\Modules\Dictionary\Dictionary.cs" />
-    <Compile Include="Assets\Modules\Ereader\BasicBook.cs" />
-    <Compile Include="Assets\Modules\Ereader\Book.cs" />
-    <Compile Include="Assets\Modules\Ereader\BookLoader.cs" />
-    <Compile Include="Assets\Modules\Ereader\EReaderBridge.cs" />
-    <Compile Include="Assets\Modules\Ereader\Page.cs" />
-    <Compile Include="Assets\Modules\Ereader\PageControl.cs" />
-    <Compile Include="Assets\Modules\Ereader\PdfBook.cs" />
-    <Compile Include="Assets\Modules\Ereader\TMP_TextEventHandler.cs" />
-    <Compile Include="Assets\Modules\Ereader\TMP_WordFocusHandler.cs" />
     <Compile Include="Assets\Modules\Wiki\Wiki.cs" />
     <Compile Include="Assets\Scripts\DynamicPageController.cs" />
     <Compile Include="Assets\Scripts\Utils\GeneralUtils.cs" />
@@ -351,14 +351,14 @@
     <Reference Include="UnityEngine.SpatialTracking">
       <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>/Users/ryan/Documents/Workspace/Unity/VReader/Assets/Modules/JsonDotNet/Assemblies/Standalone/Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.Analytics">
       <HintPath>/Users/ryan/Library/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.16/UnityEngine.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.StandardEvents">
       <HintPath>/Users/ryan/Library/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.13/UnityEngine.StandardEvents.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>/Users/ryan/Documents/Workspace/Unity/VReader/Assets/Modules/JsonDotNet/Assemblies/Standalone/Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>/Applications/Unity/Unity.app/Contents/MonoBleedingEdge/lib/mono/unity/mscorlib.dll</HintPath>

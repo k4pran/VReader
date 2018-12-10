@@ -14,43 +14,40 @@ namespace Ereader{
         private int pageIndRight;
         private int pageIndFocused;
         protected Vector3 bookPosition;
-        private float centreMargin;
-        private float width;
-        private float height;
 
-        private float pageMarginTop;
-        private float pageMarginBottom;
-        private float pageMarginRight;
-        private float pageMarginLeft;
+        private Page prevPageLeft;
+        private Page prevPageRight;
+        private Page nextPageLeft;
+        private Page nextPageRight;
 
         public BasicBook(string bookPath){
             this.bookPath = bookPath;
-            this.pages = new List<Page>();
-            this.pageIndLeft = 0;
-            this.pageIndRight = 1;
-            this.pageIndFocused = 0;
-            this.bookPosition = new Vector3(0, 0, 0);
-            this.centreMargin = 5;
-            this.pageMarginTop = 10;
-            this.pageMarginBottom = 10;
-            this.pageMarginRight = 10;
-            this.pageMarginLeft = 10;
-            this.linesPerPage = 25;
+            pages = new List<Page>();
+            pageIndLeft = -1; // Back side of front cover
+            pageIndRight = 0;
+            pageIndFocused = 0;
+            bookPosition = new Vector3(0, 0, 0);
+            linesPerPage = 25;
         }
 
         public override void Display(){
-            GetCurrentPage().Tmp.rectTransform.position = new Vector3(
-                bookPosition.x - (width / 2) - centreMargin, bookPosition.y, bookPosition.z);
-            GetCurrentPageRight().Tmp.rectTransform.position = new Vector3(
-                bookPosition.x + (width / 2) + centreMargin, bookPosition.y, bookPosition.z);
             
-            GetCurrentPage().Tmp.rectTransform.sizeDelta = new Vector2(width, height);
-            GetCurrentPageRight().Tmp.rectTransform.sizeDelta = new Vector2(width, height);    
+            if (prevPageLeft != null) prevPageLeft.Disable();
+            if (prevPageRight != null) prevPageRight.Disable();
+            if (nextPageLeft != null) nextPageLeft.Disable();
+            if (nextPageRight != null) nextPageRight.Disable();
+
+            prevPageLeft = PageIndLeft - 2 >= 0 ? Pages[PageIndLeft - 2] : null;
+            prevPageRight = PageIndRight - 2 >= 0 ? Pages[pageIndRight - 2] : null;
+            nextPageLeft = PageIndLeft + 2 < Pages.Count && PageIndLeft + 2 >= 0 ? Pages[pageIndLeft + 2] : null;
+            nextPageRight = PageIndRight + 2 < Pages.Count && PageIndRight + 2 >= 0 ? Pages[pageIndRight + 2] : null;
             
-            AddPageRect(GetCurrentPage());
-            AddPageRect(GetCurrentPageRight(), false);
+            if (prevPageLeft != null) prevPageLeft.Enable();
+            if (prevPageRight != null) prevPageRight.Enable();
+            if (nextPageLeft != null) nextPageLeft.Enable();
+            if (nextPageRight != null) nextPageRight.Enable();
             
-            GetCurrentPage().Enable();
+            GetCurrentPageLeft().Enable();
             GetCurrentPageRight().Enable();
         }
 
@@ -60,7 +57,7 @@ namespace Ereader{
             StringBuilder sb = new StringBuilder();
             int lineNum = 0;
             int pageNum = 1;
-            GameObject gameObj = new GameObject("page" + pageNum);
+            GameObject gameObj = new GameObject("tmp" + pageNum);
             TextMeshProUGUI tmp = gameObj.AddComponent<TextMeshProUGUI>();
             foreach(string line in lines){
 
@@ -68,16 +65,17 @@ namespace Ereader{
                 sb.Append("\n");
 
                 if (lineNum == linesPerPage) {
-                    gameObj = new GameObject("page" + pageNum);
+                    gameObj = new GameObject("tmp" + pageNum);
                     tmp = gameObj.AddComponent<TextMeshProUGUI>();
                     TMP_TextEventHandler textHandler = gameObj.AddComponent<TMP_TextEventHandler>();
-                    AddPage(ConstructPage(tmp, textHandler, "page" + pageNum, pageNum, sb.ToString()));
+                    AddPage(ConstructPage(tmp, textHandler, "tmp" + pageNum, pageNum, sb.ToString()));
                     pageNum++;
                     lineNum = 0;
                     sb = new StringBuilder();
                 }
                 lineNum++;
             }
+            Display();
         }
         protected Page ConstructPage(TextMeshProUGUI tmp, TMP_TextEventHandler textHandler, string objName, int pageNum, string text){
             Page page = new Page(tmp, textHandler, objName, pageNum);
@@ -86,12 +84,8 @@ namespace Ereader{
             tmp.text = text;
             return page;
         }        
-
         
         public override void AddPage(Page page){
-            Vector2 dims = page.Tmp.GetPreferredValues(page.Tmp.text);
-            width = dims.x > width ? dims.x  : width;
-            height = dims.y > height ? dims.y : height;
             pages.Add(page);
         }
 
@@ -107,37 +101,15 @@ namespace Ereader{
             return pages.ElementAt(index);
         }
 
-        public override Page GetCurrentPage(){
-            return pages.ElementAt(PageIndLeft);
-        }
-
-        public void AddPageRect(Page page, bool isLeft=true){
-                        
-            if (page.Tmp.transform.childCount == 0){
-
-                float mRightPlusCenter = isLeft ? pageMarginRight + centreMargin : pageMarginRight;
-                float mLeftPlusCenter = !isLeft ? pageMarginLeft + centreMargin : pageMarginLeft;
-
-                float xPosWithOffset = isLeft
-                    ? bookPosition.x - (width / 2) - centreMargin / 2
-                    : bookPosition.x + (width / 2) + centreMargin / 2;
-                                
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                Vector3 cubeVec3 = new Vector3(
-                    width + mLeftPlusCenter + mRightPlusCenter, 
-                    height + pageMarginTop + pageMarginBottom, 
-                    0.001f);
-                cube.transform.localScale = cubeVec3;
-                cube.transform.localPosition = new Vector3(
-                    xPosWithOffset,
-                    page.Tmp.transform.localPosition.y, 
-                    page.Tmp.transform.localPosition.z + 0.1f);
-                cube.transform.parent = page.Tmp.transform;
+        public override Page GetCurrentPageLeft(){
+            if (PageIndLeft < pages.Count && PageIndLeft >= 0){
+                return pages.ElementAt(PageIndLeft);
             }
+            return Page.GetBlank();
         }
 
         public Page GetCurrentPageRight(){
-            if (PageIndRight < pages.Count){
+            if (PageIndRight < pages.Count && PageIndRight >= 0){
                 return pages.ElementAt(PageIndRight);
             }
             return Page.GetBlank(); // if book ends on a left page pad with blank page.
@@ -150,7 +122,7 @@ namespace Ereader{
                 return;
             }
 
-            GetCurrentPage().Disable();
+            GetCurrentPageLeft().Disable();
             GetCurrentPageRight().Disable();
             
             pageIndLeft -= 2;
@@ -168,7 +140,7 @@ namespace Ereader{
                 return;
             }
             
-            GetCurrentPage().Disable();
+            GetCurrentPageLeft().Disable();
             GetCurrentPageRight().Disable();
             
             pageIndLeft += 2;
@@ -179,28 +151,13 @@ namespace Ereader{
             Display();
         }
         
-        public override void GoTo(int pageNumber){ // todo - check if correct
-            GetCurrentPage().Disable();
+        public override void GoTo(int pageNumber){ 
+            
+            GetCurrentPageLeft().Disable();
             GetCurrentPageRight().Disable();
 
-            pageNumber--;
-            // Seek to beginning
-            if (pageNumber < 0){
-                pageNumber = 0;
-            }
-            // Seek to end
-            else if (pageNumber > pages.Count - 1){
-                pageNumber = pages.Count - 1;
-            }
-
-            if (pageNumber % 2 == 0){
-                pageIndLeft = pageNumber;
-                pageIndRight = pageNumber + 1;
-            }
-            else{
-                pageIndRight = pageNumber;
-                pageIndLeft = pageNumber - 1;
-            }
+            pageIndLeft = pageNumber - 1;
+            pageIndRight = pageNumber;
 
             pageIndFocused = pageNumber;
             Display();
@@ -242,14 +199,6 @@ namespace Ereader{
 
         public Vector3 BookPosition{
             get{ return bookPosition; }
-        }
-
-        public float Width{
-            get{ return width; }
-        }
-
-        public float Height{
-            get{ return height; }
         }
     }
 }

@@ -6,11 +6,11 @@ namespace Ereader{
 
         public BookPro bookPro;
         public DynamicPageController dynamicPageController;
-        private Book book;
+        private BasicBook book;
         
         void Start(){
                         
-            BasicBook book = new BasicBook("Assets/Resources/Books/dracula.txt");
+            book = new BasicBook("Assets/Resources/Books/dracula.txt");
             book.LoadBook();
             bookPro.OnFlip.AddListener(pageChanged);
 
@@ -26,7 +26,8 @@ namespace Ereader{
         }
 
         // todo enable only pages currently displayed
-        public void pageChanged(){
+        public void pageChanged() {
+            book.GoTo((bookPro.CurrentPaper - 1) * 2);
             Debug.Log((bookPro.CurrentPaper - 1) * 2);
         }
 

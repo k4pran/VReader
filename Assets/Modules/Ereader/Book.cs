@@ -15,7 +15,7 @@ namespace Ereader{
         abstract public void Remove(Page page);
         abstract public void Remove(int index);
         abstract public Page PageAt(int index);
-        abstract public Page GetCurrentPage();
+        abstract public Page GetCurrentPageLeft();
         abstract public void Next();
         abstract public void Back();
         abstract public void GoTo(int pageNumber);

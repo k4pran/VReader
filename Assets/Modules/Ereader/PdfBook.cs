@@ -89,18 +89,18 @@ namespace Ereader{
         }
 
         public new void Display(){
-            GetCurrentPage().Tmp.rectTransform.position = new Vector3(
+            GetCurrentPageLeft().Tmp.rectTransform.position = new Vector3(
                 BookPosition.x - (bookMetrics.PageMaxWidth / 2) - centreMargin, BookPosition.y, bookPosition.z);
             GetCurrentPageRight().Tmp.rectTransform.position = new Vector3(
                 BookPosition.x + (bookMetrics.PageMaxWidth / 2) + centreMargin, BookPosition.y, bookPosition.z);
             
-            GetCurrentPage().Tmp.rectTransform.sizeDelta = new Vector2(bookMetrics.PageMaxWidth, bookMetrics.PageMaxHeight);
+            GetCurrentPageLeft().Tmp.rectTransform.sizeDelta = new Vector2(bookMetrics.PageMaxWidth, bookMetrics.PageMaxHeight);
             GetCurrentPageRight().Tmp.rectTransform.sizeDelta = new Vector2(bookMetrics.PageMaxWidth, bookMetrics.PageMaxHeight);    
             
-            AddPageRect(GetCurrentPage());
+            AddPageRect(GetCurrentPageLeft());
             AddPageRect(GetCurrentPageRight(), false);
             
-            GetCurrentPage().Enable();
+            GetCurrentPageLeft().Enable();
             GetCurrentPageRight().Enable();
         }
         
