@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace Ereader{
     
-    public class TextEventListener : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+    public class TextEventEmitter : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
         
         [Serializable]
         public class CharacterSelectionEvent : UnityEvent<char, int> { }
