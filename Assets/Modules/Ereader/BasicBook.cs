@@ -67,8 +67,7 @@ namespace Ereader{
                 if (lineNum == linesPerPage) {
                     gameObj = new GameObject("tmp" + pageNum);
                     tmp = gameObj.AddComponent<TextMeshProUGUI>();
-                    TMP_TextEventHandler textHandler = gameObj.AddComponent<TMP_TextEventHandler>();
-                    AddPage(ConstructPage(tmp, textHandler, "tmp" + pageNum, pageNum, sb.ToString()));
+                    AddPage(ConstructPage(tmp, "tmp" + pageNum, pageNum, sb.ToString()));
                     pageNum++;
                     lineNum = 0;
                     sb = new StringBuilder();
@@ -77,8 +76,8 @@ namespace Ereader{
             }
             Display();
         }
-        protected Page ConstructPage(TextMeshProUGUI tmp, TMP_TextEventHandler textHandler, string objName, int pageNum, string text){
-            Page page = new Page(tmp, textHandler, objName, pageNum);
+        protected Page ConstructPage(TextMeshProUGUI tmp, string objName, int pageNum, string text){
+            Page page = new Page(tmp, objName, pageNum);
             Vector2 preferredValues = tmp.GetPreferredValues(text);
             page.PreferredVals = preferredValues;
             tmp.text = text;

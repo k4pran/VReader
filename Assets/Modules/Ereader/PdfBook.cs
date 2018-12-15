@@ -58,8 +58,7 @@ namespace Ereader{
 
                 gameObj = new GameObject("page" + page.PageNumber);
                 tmp = gameObj.AddComponent<TextMeshProUGUI>();
-                TMP_TextEventHandler textHandler = gameObj.AddComponent<TMP_TextEventHandler>();
-                AddPage(ConstructPage(tmp, textHandler, "page" + page.PageNumber, page.PageNumber, sb.ToString()));
+                AddPage(ConstructPage(tmp, "page" + page.PageNumber, page.PageNumber, sb.ToString()));
                 sb = new StringBuilder();
             }
         }
@@ -79,8 +78,8 @@ namespace Ereader{
             scaleFactorH = heightProportion / tmpHeightProportion;
         }
         
-        private new Page ConstructPage(TextMeshProUGUI tmp, TMP_TextEventHandler textHandler, string objName, int pageNum, string text){
-            Page page = new Page(tmp, textHandler, objName, pageNum);
+        private new Page ConstructPage(TextMeshProUGUI tmp, string objName, int pageNum, string text){
+            Page page = new Page(tmp, objName, pageNum);
             page.Tmp.overflowMode = TextOverflowModes.Overflow;
             page.PreferredVals = new Vector2(bookMetrics.PageMaxWidth, bookMetrics.PageMaxHeight);
             tmp.text = text;
