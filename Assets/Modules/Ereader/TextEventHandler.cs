@@ -3,30 +3,38 @@
 namespace Ereader{
     public class TextEventHandler : MonoBehaviour {
         
-        public TextEventListener textEventListener;
+        public TextEventEmitter textEventEmitter;
+
+        void Start(){
+            if (textEventEmitter != null) {
+                addAll();
+            }
+        }
 
         void OnEnable()
         {
-            if (textEventListener != null)
-            {
-                textEventListener.onCharacterSelection.AddListener(OnCharacterSelection);
-                textEventListener.onSpriteSelection.AddListener(OnSpriteSelection);
-                textEventListener.onWordSelection.AddListener(OnWordSelection);
-                textEventListener.onLineSelection.AddListener(OnLineSelection);
-                textEventListener.onLinkSelection.AddListener(OnLinkSelection);
+            if (textEventEmitter != null) {
+                addAll();
             }
+        }
+
+        private void addAll() {
+            textEventEmitter.onCharacterSelection.AddListener(OnCharacterSelection);
+            textEventEmitter.onSpriteSelection.AddListener(OnSpriteSelection);
+            textEventEmitter.onWordSelection.AddListener(OnWordSelection);
+            textEventEmitter.onLineSelection.AddListener(OnLineSelection);
+            textEventEmitter.onLinkSelection.AddListener(OnLinkSelection);
         }
 
 
         void OnDisable()
         {
-            if (textEventListener != null)
-            {
-                textEventListener.onCharacterSelection.RemoveListener(OnCharacterSelection);
-                textEventListener.onSpriteSelection.RemoveListener(OnSpriteSelection);
-                textEventListener.onWordSelection.RemoveListener(OnWordSelection);
-                textEventListener.onLineSelection.RemoveListener(OnLineSelection);
-                textEventListener.onLinkSelection.RemoveListener(OnLinkSelection);
+            if (textEventEmitter != null) {      
+                textEventEmitter.onCharacterSelection.RemoveListener(OnCharacterSelection);
+                textEventEmitter.onSpriteSelection.RemoveListener(OnSpriteSelection);
+                textEventEmitter.onWordSelection.RemoveListener(OnWordSelection);
+                textEventEmitter.onLineSelection.RemoveListener(OnLineSelection);
+                textEventEmitter.onLinkSelection.RemoveListener(OnLinkSelection);
             }
         }
 
