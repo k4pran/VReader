@@ -9,81 +9,92 @@ namespace Ereader{
     public class TextEventEmitter : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
         
         [Serializable]
-        public class CharacterSelectionEvent : UnityEvent<char, int> { }
+        public class CharacterHoverEvent : UnityEvent<char, int> { }
 
         [Serializable]
-        public class SpriteSelectionEvent : UnityEvent<char, int> { }
+        public class SpriteHoverEvent : UnityEvent<char, int> { }
 
         [Serializable]
-        public class WordSelectionEvent : UnityEvent<string, int, int> { }
+        public class WordHoverEvent : UnityEvent<string, int, int> { }
 
         [Serializable]
-        public class LineSelectionEvent : UnityEvent<string, int, int> { }
+        public class LineHoverEvent : UnityEvent<string, int, int> { }
 
         [Serializable]
-        public class LinkSelectionEvent : UnityEvent<string, string, int> { }
-
+        public class LinkHoverEvent : UnityEvent<string, string, int> { }
+        
+        [Serializable]
+        public class WordSelectEvent : UnityEvent<TMP_Text, TMP_WordInfo, int> { }
 
         /// <summary>
         /// Event delegate triggered when pointer is over a character.
         /// </summary>
-        public CharacterSelectionEvent onCharacterSelection
+        public CharacterHoverEvent OnCharacterHover
         {
-            get { return m_OnCharacterSelection; }
-            set { m_OnCharacterSelection = value; }
+            get { return _mOnCharacterHover; }
+            set { _mOnCharacterHover = value; }
         }
         [SerializeField]
-        private CharacterSelectionEvent m_OnCharacterSelection = new CharacterSelectionEvent();
+        private CharacterHoverEvent _mOnCharacterHover = new CharacterHoverEvent();
 
 
         /// <summary>
         /// Event delegate triggered when pointer is over a sprite.
         /// </summary>
-        public SpriteSelectionEvent onSpriteSelection
+        public SpriteHoverEvent OnSpriteHover
         {
-            get { return m_OnSpriteSelection; }
-            set { m_OnSpriteSelection = value; }
+            get { return _mOnSpriteHover; }
+            set { _mOnSpriteHover = value; }
         }
         [SerializeField]
-        private SpriteSelectionEvent m_OnSpriteSelection = new SpriteSelectionEvent();
+        private SpriteHoverEvent _mOnSpriteHover = new SpriteHoverEvent();
 
 
         /// <summary>
         /// Event delegate triggered when pointer is over a word.
         /// </summary>
-        public WordSelectionEvent onWordSelection
+        public WordHoverEvent OnWordHover
         {
-            get { return m_OnWordSelection; }
-            set { m_OnWordSelection = value; }
+            get { return _mOnWordHover; }
+            set { _mOnWordHover = value; }
         }
         [SerializeField]
-        private WordSelectionEvent m_OnWordSelection = new WordSelectionEvent();
+        private WordHoverEvent _mOnWordHover = new WordHoverEvent();
 
 
         /// <summary>
         /// Event delegate triggered when pointer is over a line.
         /// </summary>
-        public LineSelectionEvent onLineSelection
+        public LineHoverEvent OnLineHover
         {
-            get { return m_OnLineSelection; }
-            set { m_OnLineSelection = value; }
+            get { return _mOnLineHover; }
+            set { _mOnLineHover = value; }
         }
         [SerializeField]
-        private LineSelectionEvent m_OnLineSelection = new LineSelectionEvent();
+        private LineHoverEvent _mOnLineHover = new LineHoverEvent();
 
 
         /// <summary>
         /// Event delegate triggered when pointer is over a link.
         /// </summary>
-        public LinkSelectionEvent onLinkSelection
+        public LinkHoverEvent OnLinkHover
         {
-            get { return m_OnLinkSelection; }
-            set { m_OnLinkSelection = value; }
+            get { return _mOnLinkHover; }
+            set { _mOnLinkHover = value; }
         }
         [SerializeField]
-        private LinkSelectionEvent m_OnLinkSelection = new LinkSelectionEvent();
-
-
+        private LinkHoverEvent _mOnLinkHover = new LinkHoverEvent();
+        
+        /// <summary>
+        /// Event delegate triggered when mousedown on a word.
+        /// </summary>
+        public WordSelectEvent OnWordSelect
+        {
+            get { return _mOnWordSelect; }
+            set { _mOnWordSelect = value; }
+        }
+        [SerializeField]
+        private WordSelectEvent _mOnWordSelect= new WordSelectEvent();
 
         private TMP_Text m_TextComponent;
 
@@ -123,7 +134,7 @@ namespace Ereader{
         {
             if (TMP_TextUtilities.IsIntersectingRectTransform(m_TextComponent.rectTransform, Input.mousePosition, m_Camera))
             {
-                #region Example of Character or Sprite Selection
+                #region Example of Character or Sprite Hover
                 int charIndex = TMP_TextUtilities.FindIntersectingCharacter(m_TextComponent, Input.mousePosition, m_Camera, true);
                 if (charIndex != -1 && charIndex != m_lastCharIndex)
                 {
@@ -131,42 +142,43 @@ namespace Ereader{
 
                     TMP_TextElementType elementType = m_TextComponent.textInfo.characterInfo[charIndex].elementType;
 
-                    // Send event to any event listeners depending on whether it is a character or sprite.
                     if (elementType == TMP_TextElementType.Character)
-                        SendOnCharacterSelection(m_TextComponent.textInfo.characterInfo[charIndex].character, charIndex);
+                        SendOnCharacterHover(m_TextComponent.textInfo.characterInfo[charIndex].character, charIndex);
                     else if (elementType == TMP_TextElementType.Sprite)
-                        SendOnSpriteSelection(m_TextComponent.textInfo.characterInfo[charIndex].character, charIndex);
+                        SendOnSpriteHover(m_TextComponent.textInfo.characterInfo[charIndex].character, charIndex);
                 }
                 #endregion
 
 
-                #region Example of Word Selection
-                // Check if Mouse intersects any words and if so assign a random color to that word.
+                #region Example of Word Hover
                 int wordIndex = TMP_TextUtilities.FindIntersectingWord(m_TextComponent, Input.mousePosition, m_Camera);
                 if (wordIndex != -1 && wordIndex != m_lastWordIndex)
                 {
                     m_lastWordIndex = wordIndex;
 
-                    // Get the information about the selected word.
                     TMP_WordInfo wInfo = m_TextComponent.textInfo.wordInfo[wordIndex];
 
-                    // Send the event to any listeners.
-                    SendOnWordSelection(wInfo.GetWord(), wInfo.firstCharacterIndex, wInfo.characterCount);
+                    SendOnWordHover(wInfo.GetWord(), wInfo.firstCharacterIndex, wInfo.characterCount);
                 }
+                
+                if (wordIndex != -1 && Input.GetMouseButtonDown(0)) {
+
+                    TMP_WordInfo wInfo = m_TextComponent.textInfo.wordInfo[wordIndex];
+                    SendOnWordSelect(m_TextComponent, wInfo, wordIndex);
+                    m_TextComponent.textInfo.wordInfo[70].firstCharacterIndex = 1000;
+                }
+                
                 #endregion
 
 
-                #region Example of Line Selection
-                // Check if Mouse intersects any words and if so assign a random color to that word.
+                #region Example of Line Hover
                 int lineIndex = TMP_TextUtilities.FindIntersectingLine(m_TextComponent, Input.mousePosition, m_Camera);
                 if (lineIndex != -1 && lineIndex != m_lastLineIndex)
                 {
                     m_lastLineIndex = lineIndex;
 
-                    // Get the information about the selected word.
                     TMP_LineInfo lineInfo = m_TextComponent.textInfo.lineInfo[lineIndex];
 
-                    // Send the event to any listeners.
                     char[] buffer = new char[lineInfo.characterCount];
                     for (int i = 0; i < lineInfo.characterCount && i < m_TextComponent.textInfo.characterInfo.Length; i++)
                     {
@@ -174,72 +186,65 @@ namespace Ereader{
                     }
 
                     string lineText = new string(buffer);
-                    SendOnLineSelection(lineText, lineInfo.firstCharacterIndex, lineInfo.characterCount);
+                    SendOnLineHover(lineText, lineInfo.firstCharacterIndex, lineInfo.characterCount);
                 }
                 #endregion
 
 
-                #region Example of Link Handling
-                // Check if mouse intersects with any links.
+                #region Example of Link Hover
                 int linkIndex = TMP_TextUtilities.FindIntersectingLink(m_TextComponent, Input.mousePosition, m_Camera);
 
-                // Handle new Link selection.
                 if (linkIndex != -1 && linkIndex != m_selectedLink)
                 {
                     m_selectedLink = linkIndex;
 
-                    // Get information about the link.
                     TMP_LinkInfo linkInfo = m_TextComponent.textInfo.linkInfo[linkIndex];
 
-                    // Send the event to any listeners. 
-                    SendOnLinkSelection(linkInfo.GetLinkID(), linkInfo.GetLinkText(), linkIndex);
+                    SendOnLinkHover(linkInfo.GetLinkID(), linkInfo.GetLinkText(), linkIndex);
                 }
                 #endregion
             }
         }
 
 
-        public void OnPointerEnter(PointerEventData eventData)
-        {
-            //Debug.Log("OnPointerEnter()");
+        public void OnPointerEnter(PointerEventData eventData) {
+//            Debug.Log("OnPointerEnter()");
         }
 
 
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            //Debug.Log("OnPointerExit()");
+        public void OnPointerExit(PointerEventData eventData) {
+//            Debug.Log("OnPointerExit()");
         }
 
 
-        private void SendOnCharacterSelection(char character, int characterIndex)
-        {
-            if (onCharacterSelection != null)
-                onCharacterSelection.Invoke(character, characterIndex);
+        private void SendOnCharacterHover(char character, int characterIndex) {
+            if (OnCharacterHover != null)
+                OnCharacterHover.Invoke(character, characterIndex);
         }
 
-        private void SendOnSpriteSelection(char character, int characterIndex)
-        {
-            if (onSpriteSelection != null)
-                onSpriteSelection.Invoke(character, characterIndex);
+        private void SendOnSpriteHover(char character, int characterIndex) {
+            if (OnSpriteHover != null)
+                OnSpriteHover.Invoke(character, characterIndex);
         }
 
-        private void SendOnWordSelection(string word, int charIndex, int length)
-        {
-            if (onWordSelection != null)
-                onWordSelection.Invoke(word, charIndex, length);
+        private void SendOnWordHover(string word, int charIndex, int length) {
+            if (OnWordHover != null)
+                OnWordHover.Invoke(word, charIndex, length);
         }
 
-        private void SendOnLineSelection(string line, int charIndex, int length)
-        {
-            if (onLineSelection != null)
-                onLineSelection.Invoke(line, charIndex, length);
+        private void SendOnLineHover(string line, int charIndex, int length) {
+            if (OnLineHover != null)
+                OnLineHover.Invoke(line, charIndex, length);
         }
 
-        private void SendOnLinkSelection(string linkID, string linkText, int linkIndex)
-        {
-            if (onLinkSelection != null)
-                onLinkSelection.Invoke(linkID, linkText, linkIndex);
+        private void SendOnLinkHover(string linkID, string linkText, int linkIndex) {
+            if (OnLinkHover != null)
+                OnLinkHover.Invoke(linkID, linkText, linkIndex);
         }
         
+        private void SendOnWordSelect(TMP_Text tmp, TMP_WordInfo wordInfo, int wordIndex) {
+            if (OnWordSelect != null)
+                OnWordSelect.Invoke(tmp, wordInfo, wordIndex);
+        }
     }
 }

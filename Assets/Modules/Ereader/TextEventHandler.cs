@@ -1,11 +1,31 @@
-﻿using UnityEngine;
+﻿using System;
+using TMPro;
+using UnityEditor;
+using UnityEngine;
 
 namespace Ereader{
     public class TextEventHandler : MonoBehaviour {
         
         public TextEventEmitter textEventEmitter;
 
+        #region Inspector Debugging Options
+
+        [Header("Debug Handlers")]
+        public bool CharHandlersOn;
+        public bool SpriteHandlersOn;
+        public bool WordHandlersOn;
+        public bool LineHandlersOn;
+        public bool LinkHandlersOn;
+
+        [Header("Debug Styling")] 
+        public TextSelectModes textSelectMode;
+                
+        #endregion
+
         void Start(){
+            
+            textSelectMode = TextSelectModes.HIGHLIGHT;
+            
             if (textEventEmitter != null) {
                 addAll();
             }
@@ -17,52 +37,112 @@ namespace Ereader{
                 addAll();
             }
         }
+        
+        #region Add/Remove Handlers
 
         private void addAll() {
-            textEventEmitter.onCharacterSelection.AddListener(OnCharacterSelection);
-            textEventEmitter.onSpriteSelection.AddListener(OnSpriteSelection);
-            textEventEmitter.onWordSelection.AddListener(OnWordSelection);
-            textEventEmitter.onLineSelection.AddListener(OnLineSelection);
-            textEventEmitter.onLinkSelection.AddListener(OnLinkSelection);
+            textEventEmitter.OnCharacterHover.AddListener(OnCharacterHoverLog);
+            textEventEmitter.OnSpriteHover.AddListener(OnSpriteHoverLog);
+            textEventEmitter.OnWordHover.AddListener(OnWordHoverLog);
+            textEventEmitter.OnLineHover.AddListener(OnLineHoverLog);
+            textEventEmitter.OnLinkHover.AddListener(OnLinkHoverLog);
+            textEventEmitter.OnWordSelect.AddListener(OnWordSelectionLog);
+            textEventEmitter.OnWordSelect.AddListener(HighlightWord);
         }
 
 
         void OnDisable()
         {
             if (textEventEmitter != null) {      
-                textEventEmitter.onCharacterSelection.RemoveListener(OnCharacterSelection);
-                textEventEmitter.onSpriteSelection.RemoveListener(OnSpriteSelection);
-                textEventEmitter.onWordSelection.RemoveListener(OnWordSelection);
-                textEventEmitter.onLineSelection.RemoveListener(OnLineSelection);
-                textEventEmitter.onLinkSelection.RemoveListener(OnLinkSelection);
+                textEventEmitter.OnCharacterHover.RemoveListener(OnCharacterHoverLog);
+                textEventEmitter.OnSpriteHover.RemoveListener(OnSpriteHoverLog);
+                textEventEmitter.OnWordHover.RemoveListener(OnWordHoverLog);
+                textEventEmitter.OnLineHover.RemoveListener(OnLineHoverLog);
+                textEventEmitter.OnLinkHover.RemoveListener(OnLinkHoverLog);
+                textEventEmitter.OnWordSelect.RemoveListener(OnWordSelectionLog);
             }
         }
+        
+        #endregion
+        
+        
 
+        void HighlightWord(TMP_Text textComponent, TMP_WordInfo wordInfo, int wordIndex) {
 
-        void OnCharacterSelection(char c, int index)
-        {
-            Debug.Log("Character [" + c + "] at Index: " + index + " has been selected.");
+            switch(textSelectMode) {
+                
+                case TextSelectModes.HIGHLIGHT:
+                    TextStyler.HighlightText(textComponent, wordInfo, wordIndex);
+                    break;
+                
+                default:
+                    Debug.Log("No active select mode");
+                    break;
+                    
+            }
+            
         }
 
-        void OnSpriteSelection(char c, int index)
-        {
-            Debug.Log("Sprite [" + c + "] at Index: " + index + " has been selected.");
+        #region LoggerHandlers
+
+        void OnWordSelectionLog(TMP_Text tmp, TMP_WordInfo wordInfo, int wordIndex){
+            if (!WordHandlersOn) {
+                return;
+            }
+            
+            Debug.Log("Word [" + wordInfo.GetWord() + "] with first character index of " + wordInfo.firstCharacterIndex 
+                      + " and length of " +  wordInfo.characterCount + " has been selected.");
         }
 
-        void OnWordSelection(string word, int firstCharacterIndex, int length)
-        {
-            Debug.Log("Word [" + word + "] with first character index of " + firstCharacterIndex + " and length of " + length + " has been selected.");
+        void OnCharacterHoverLog(char c, int index) {
+            
+            if (!CharHandlersOn){
+                return;
+            }
+            
+            Debug.Log("Character [" + c + "] at Index: " + index + " has been hovered.");
         }
 
-        void OnLineSelection(string lineText, int firstCharacterIndex, int length)
-        {
-            Debug.Log("Line [" + lineText + "] with first character index of " + firstCharacterIndex + " and length of " + length + " has been selected.");
+        void OnSpriteHoverLog(char c, int index) {
+            
+            if (!SpriteHandlersOn){
+                return;
+            }
+            
+            Debug.Log("Sprite [" + c + "] at Index: " + index + " has been hovered.");
         }
 
-        void OnLinkSelection(string linkID, string linkText, int linkIndex)
-        {
-            Debug.Log("Link Index: " + linkIndex + " with ID [" + linkID + "] and Text \"" + linkText + "\" has been selected.");
+        void OnWordHoverLog(string word, int firstCharacterIndex, int length) {
+            
+            if (!WordHandlersOn){
+                return;
+            }
+            
+            Debug.Log("Word [" + word + "] with first character index of " + firstCharacterIndex + " and length of " + 
+                      length + " has been hovered.");
         }
+
+        void OnLineHoverLog(string lineText, int firstCharacterIndex, int length) {
+            
+            if (!LineHandlersOn){
+                return;
+            }
+            
+            Debug.Log("Line [" + lineText + "] with first character index of " + firstCharacterIndex + 
+                      " and length of " + length + " has been hovered.");
+        }
+
+        void OnLinkHoverLog(string linkID, string linkText, int linkIndex) {
+            
+            if (!LinkHandlersOn){
+                return;
+            }
+            
+            Debug.Log("Link Index: " + linkIndex + " with ID [" + linkID + "] and Text \"" + linkText + "\" " +
+                      "has been hovered.");
+        }
+        
+        #endregion
         
     }
 }
