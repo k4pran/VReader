@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Policy;
+using System.Text;
 
 namespace WikiQueries{
-    
-    // todo - multiple calls to Query prepends extra '?' due to bug - clear multiple ?s
-    
+        
     public class QueryBuilder{
         
         ///-------------------------------------///
@@ -12,6 +14,7 @@ namespace WikiQueries{
 
         private UriBuilder uriBuilder;
         private Format format;
+        private List<string> queryParams;
         
         ///-------------------------------------///
         ///             Constructors            ///
@@ -19,27 +22,23 @@ namespace WikiQueries{
         
         public QueryBuilder(string baseUri){
             Uri uri;
+            queryParams = new List<string>();
             if (!Uri.TryCreate(baseUri, UriKind.Absolute, out uri)){
                 throw new InvalidUriException("Base uri " + uri + " is invalid.");
             }
             
-            uriBuilder = new UriBuilder(baseUri);
-            if (uriBuilder.Query.Length == 0){
-                uriBuilder.Query = "";
-            }
+            uriBuilder = new UriBuilder(uri);
             format = Format.XML;
         }
         
         public QueryBuilder(string baseUri, Format format){
             Uri uri;
+            queryParams = new List<string>();
             if (!Uri.TryCreate(baseUri, UriKind.Absolute, out uri)){
                 throw new InvalidUriException("Base uri " + uri + " is invalid.");
             }
             
-            uriBuilder = new UriBuilder(baseUri);
-            if (uriBuilder.Query.Length == 0){
-                uriBuilder.Query = "";
-            }
+            uriBuilder = new UriBuilder(uri);
             this.format = format;
         }
         
@@ -53,14 +52,10 @@ namespace WikiQueries{
         /// <param name="key">Parameter key</param>
         /// <param name="value">Parameter value - optional</param>
         public void AppendParam(string key, string value=""){
-            
-            if (value.Length == 0){
-                uriBuilder.Query += uriBuilder.Query == "?" ? 
-                    Uri.EscapeDataString(key) : "&" + Uri.EscapeDataString(key);
-                return;
-            }
-            uriBuilder.Query += uriBuilder.Query == "?" ? "" : "&";
-            uriBuilder.Query += Uri.EscapeDataString(key) + "=" + Uri.EscapeDataString(value);
+            StringBuilder queryPart = new StringBuilder();
+            queryPart.Append(queryParams.Count == 0 ? "" : "&");
+            queryPart.Append(value == "" ? Uri.EscapeDataString(key) : Uri.EscapeDataString(key) + "=" + Uri.EscapeDataString(value));
+            queryParams.Add(queryPart.ToString());
         }
 
         /// <summary>
@@ -68,37 +63,35 @@ namespace WikiQueries{
         /// </summary>
         /// <param name="key">Parameter key</param>
         /// <param name="values">Parameter values - multiple values seperated by wikis preferred '|' char</param>
-        public void AppendMultiValParam(string key, string[] values){
-            
+        public void AppendMultiValParam(string key, string[] values) {
+            StringBuilder queryPart = new StringBuilder();
+            queryPart.Append(queryParams.Count == 0 ? "" : "&");
             string vals = string.Join("|", values);
-
-            uriBuilder.Query += uriBuilder.Query == "?" ? "" : "&";
-            uriBuilder.Query += Uri.EscapeDataString(key) + "=" + Uri.EscapeDataString(vals);
+            queryPart.Append(Uri.EscapeDataString(key) + "=" + Uri.EscapeDataString(vals));
+            queryParams.Add(queryPart.ToString());
         }
+
+        public void FinishQuery(){
+            uriBuilder.Query = string.Join("", queryParams.ToArray());
+        }
+
         
         ///-------------------------------------///
         ///             ACCESSORS               ///
         ///-------------------------------------///
-
-        
-
-        public override string ToString(){
-            if (!uriBuilder.Uri.ToString().Contains("format=")){
-                AppendParam("format", format.ToString().ToLower());
-            }
-            else{
-                if (!uriBuilder.Uri.ToString().Contains("format=" + format.ToString().ToLower())){
-                    string temp = uriBuilder.ToString().Replace("format=" + format.ToString().ToLower(), "");
-                    uriBuilder = new UriBuilder(temp);
-                    AppendParam("format", format.ToString().ToLower());
-                }
-            }
-            return uriBuilder.ToString();
-        }
+       
+         
 
         public Format Format{
             get{ return format; }
-            set{ format = value; }
+            set{
+                format = value;
+                AppendParam("format", format.ToString().ToLower());
+            }
+        }
+
+        public override string ToString(){
+            return uriBuilder.ToString();
         }
     }
 

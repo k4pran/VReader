@@ -35,8 +35,9 @@ namespace WikiQueries{
             if (plainText){
                 query.AppendParam("explaintext");
             }
-
             query.Format = Format.XML;
+            query.FinishQuery();
+
             string result = QueryPageName(query);
             return result;
         }
@@ -72,19 +73,12 @@ namespace WikiQueries{
             yield return www;
      
             // check for errors
-            if (www.error == null)
-            {
+            if (www.error == null) {
                 Debug.Log("WWW Success: " + www.text);
-            } else {
+            } 
+            else {
                 Debug.Log("WWW Error: " + www.error);
             }    
-        }
-    }
-    
-    
-    
-    class QueryResponseException : Exception{
-        public QueryResponseException(string message) : base(message){
         }
     }
 }
