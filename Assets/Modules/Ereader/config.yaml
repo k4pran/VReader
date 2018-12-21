@@ -1,0 +1,3 @@
+bookLibraryPath: ''
+#Only for .txt formats with no explicit lines per page
+linesPerPage: 26
