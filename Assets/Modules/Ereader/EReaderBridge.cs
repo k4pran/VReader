@@ -14,9 +14,12 @@ namespace Ereader{
             book.LoadBook();
             bookPro.OnFlip.AddListener(pageChanged);
 
-            for(int i = 1; i < book.PageCount(); i += 2){
+            for(int i = 1; i < 3; i += 2){
                 
-                dynamicPageController.AddPaper(book.Pages[i - 1].Tmp, book.Pages[i].Tmp);
+                Paper paper = dynamicPageController.AddPaper();
+                
+                book.Pages[i - 1].SetParent(paper.Front);
+                book.Pages[i].SetParent(paper.Back);
                 
                 dynamicPageController.fitTMP(book.Pages[i - 1].Tmp, 
                     book.PaddingTop, book.PaddingBottom, book.PaddingLeft, book.PaddingRight);
@@ -25,7 +28,6 @@ namespace Ereader{
             }  
         }
 
-        // todo enable only pages currently displayed
         public void pageChanged() {
             book.GoTo((bookPro.CurrentPaper - 1) * 2);
             Debug.Log((bookPro.CurrentPaper - 1) * 2);

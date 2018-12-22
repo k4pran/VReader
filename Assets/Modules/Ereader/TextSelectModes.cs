@@ -5,7 +5,7 @@
         HIGHLIGHT,
         DICTIONARY,
         WIKIPEDIA,
-        None
+        NONE
         
     }
 }

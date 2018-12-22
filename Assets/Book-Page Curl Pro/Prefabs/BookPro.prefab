@@ -731,8 +731,8 @@ MonoBehaviour:
   OnFlip:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   StartFlippingPaper: 0
   EndFlippingPaper: 1
 --- !u!114 &114000012881445938

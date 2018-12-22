@@ -24,7 +24,7 @@ namespace Ereader{
 
         void Start(){
             
-            textSelectMode = TextSelectModes.HIGHLIGHT;
+            textSelectMode = TextSelectModes.WIKIPEDIA;
             
             if (textEventEmitter != null) {
                 addAll();
@@ -47,7 +47,9 @@ namespace Ereader{
             textEventEmitter.OnLineHover.AddListener(OnLineHoverLog);
             textEventEmitter.OnLinkHover.AddListener(OnLinkHoverLog);
             textEventEmitter.OnWordSelect.AddListener(OnWordSelectionLog);
-            textEventEmitter.OnWordSelect.AddListener(HighlightWord);
+            
+            // for debugging purposes - methods to be replaced with VR interactions.
+            textEventEmitter.OnWordSelect.AddListener(HandleMouseCLick); 
         }
 
 
@@ -63,11 +65,9 @@ namespace Ereader{
             }
         }
         
-        #endregion
-        
-        
+        #endregion    
 
-        void HighlightWord(TMP_Text textComponent, TMP_WordInfo wordInfo, int wordIndex) {
+        void HandleMouseCLick(TMP_Text textComponent, TMP_WordInfo wordInfo, int wordIndex) {
 
             switch(textSelectMode) {
                 
@@ -75,8 +75,12 @@ namespace Ereader{
                     TextStyler.HighlightText(textComponent, wordInfo, wordIndex);
                     break;
                 
+                case TextSelectModes.WIKIPEDIA:
+                    WikiBridge.LogResults(wordInfo.GetWord());
+                    break;
+                
                 default:
-                    Debug.Log("No active select mode");
+                    Debug.Log("No mode selected");
                     break;
                     
             }

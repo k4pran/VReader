@@ -52,12 +52,11 @@ namespace Ereader{
         }
 
         public void LoadBook(){
-            BookDotText dracula = new BookDotText(bookPath);
-            string[] lines = dracula.Lines;
+            string[] lines = new []{""}; // todo fix - temp to make it run
             StringBuilder sb = new StringBuilder();
             int lineNum = 0;
             int pageNum = 1;
-            GameObject gameObj = new GameObject("tmp" + pageNum);
+            GameObject gameObj = new GameObject("TextMeshPro" + pageNum);
             TextMeshProUGUI tmp = gameObj.AddComponent<TextMeshProUGUI>();
             foreach(string line in lines){
 
@@ -65,9 +64,9 @@ namespace Ereader{
                 sb.Append("\n");
 
                 if (lineNum == linesPerPage) {
-                    gameObj = new GameObject("tmp" + pageNum);
+                    gameObj = new GameObject("TextMeshPro" + pageNum);
                     tmp = gameObj.AddComponent<TextMeshProUGUI>();
-                    AddPage(ConstructPage(tmp, "tmp" + pageNum, pageNum, sb.ToString()));
+                    AddPage(ConstructPage(tmp, "TextMeshPro" + pageNum, pageNum, sb.ToString()));
                     pageNum++;
                     lineNum = 0;
                     sb = new StringBuilder();

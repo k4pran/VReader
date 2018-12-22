@@ -60,16 +60,22 @@
     <Compile Include="Assets\Book-Page Curl Pro\Scripts\BookPro.cs" />
     <Compile Include="Assets\Book-Page Curl Pro\Scripts\PageFlipper.cs" />
     <Compile Include="Assets\Book-Page Curl Pro\Scripts\Tween.cs" />
+    <Compile Include="Assets\Modules\Converter\PdfConversion.cs" />
     <Compile Include="Assets\Modules\Dictionary\Dictionary.cs" />
     <Compile Include="Assets\Modules\Ereader\BasicBook.cs" />
     <Compile Include="Assets\Modules\Ereader\Book.cs" />
-    <Compile Include="Assets\Modules\Ereader\BookLoader.cs" />
+    <Compile Include="Assets\Modules\Ereader\BookFormat.cs" />
+    <Compile Include="Assets\Modules\Ereader\BookImporter.cs" />
+    <Compile Include="Assets\Modules\Ereader\Config.cs" />
     <Compile Include="Assets\Modules\Ereader\EReaderBridge.cs" />
     <Compile Include="Assets\Modules\Ereader\Page.cs" />
     <Compile Include="Assets\Modules\Ereader\PageControl.cs" />
     <Compile Include="Assets\Modules\Ereader\PdfBook.cs" />
-    <Compile Include="Assets\Modules\Ereader\TMP_TextEventHandler.cs" />
-    <Compile Include="Assets\Modules\Ereader\TMP_WordFocusHandler.cs" />
+    <Compile Include="Assets\Modules\Ereader\TextEventEmitter.cs" />
+    <Compile Include="Assets\Modules\Ereader\TextEventHandler.cs" />
+    <Compile Include="Assets\Modules\Ereader\TextSelectModes.cs" />
+    <Compile Include="Assets\Modules\Ereader\TextStyler.cs" />
+    <Compile Include="Assets\Modules\Ereader\WikiBridge.cs" />
     <Compile Include="Assets\Modules\PdfMetrics\BookMetrics.cs" />
     <Compile Include="Assets\Modules\PdfMetrics\CharMetrics.cs" />
     <Compile Include="Assets\Modules\PdfMetrics\ChunkMetrics.cs" />
@@ -81,8 +87,13 @@
     <Compile Include="Assets\Modules\PdfMetrics\Rect.cs" />
     <Compile Include="Assets\Modules\PdfMetrics\Styler.cs" />
     <Compile Include="Assets\Modules\PdfMetrics\WordMetrics.cs" />
+    <Compile Include="Assets\Modules\Wiki\Format.cs" />
+    <Compile Include="Assets\Modules\Wiki\ParserXml.cs" />
+    <Compile Include="Assets\Modules\Wiki\QueryBuilder.cs" />
     <Compile Include="Assets\Modules\Wiki\Wiki.cs" />
+    <Compile Include="Assets\Modules\Wiki\WikiDict.cs" />
     <Compile Include="Assets\Scripts\DynamicPageController.cs" />
+    <Compile Include="Assets\Scripts\TestHover.cs" />
     <Compile Include="Assets\Scripts\Utils\GeneralUtils.cs" />
     <Compile Include="Assets\Scripts\Utils\Generators.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
@@ -387,6 +398,12 @@
     <Reference Include="Boo.Lang">
       <HintPath>/Applications/Unity/Unity.app/Contents/MonoBleedingEdge/lib/mono/unity/Boo.Lang.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{0652C065-C8BD-1106-74F4-6179A46B9924}</Project>
+      <Name>Assembly-CSharp-firstpass</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

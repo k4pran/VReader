@@ -1,5 +1,4 @@
 ﻿using System;
-using Ereader.Knowledge;
 using UnityEngine;
 using WikiQueries;
 
@@ -20,6 +19,8 @@ namespace Ereader{
             }
 
             wiki.GetComponent<Wiki>().PageSummary(selection);
+            
+//            PdfConversion.ToJpegs("/Users/ryan/Documents/Books/Maven.pdf", "");
         }
     }
 }
