@@ -81,16 +81,36 @@ namespace Ereader{
         }
         
         private void ImportPdf(string path){
+            string outputDir = GenerateDirs(path);
+            
+            PdfConversion.ToJpegs(path, outputDir + "/" + "pages/");
+        }
+
+        // Generates required directories or skips if already exists
+        private string GenerateDirs(string path) {
+            
             string imageOutputPath = Config.Instance.BookLibraryPath;
             string bookTitle = GetTitleFromPath(path);
             
-            string outputDir = imageOutputPath + "/" + bookTitle;
-            if (!Directory.Exists(outputDir)){
-                Directory.CreateDirectory(outputDir); // todo handle exceptions
+            string libDir = imageOutputPath + "/VReader";
+            string outputDir = libDir + "/" + bookTitle;
+            
+            // Base directory for VReader user data
+            if (!Directory.Exists(libDir)) {
+                Directory.CreateDirectory(libDir); // todo handle exceptions
+            }
+            
+            // Each book has its' own directory - Renaming book filenames will create duplicates
+            if (!Directory.Exists(outputDir)) {
+                Directory.CreateDirectory(outputDir);
+            }
+            
+            // For storing images - textures for book pages
+            if (!Directory.Exists(outputDir + "/" + "pages")) {
                 Directory.CreateDirectory(outputDir + "/" + "pages");
             }
-                        
-            PdfConversion.ToJpegs(path, Config.Instance.BookLibraryPath);
+            
+            return outputDir + "/" + "pages/";
         }
 
         private void ImportPdfInteractive(string path) {
