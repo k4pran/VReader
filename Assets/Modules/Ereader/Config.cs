@@ -13,11 +13,11 @@ namespace Ereader {
         // Singleton pattern
         private static Config instance;
         private static readonly object padlock = new object();
-        private static bool isInstantiated;
         
         // Properties
         private String bookLibraryPath;
         private int linesPerPage;
+        private bool pdfImportAsImages;
 
         public Config() {
             if (instance != null){
@@ -30,7 +30,6 @@ namespace Ereader {
                 lock(padlock) {
                     if (instance == null) {
                         instance = Deserialize();
-                        isInstantiated = true;
                     }
                     return instance;
                 }
@@ -54,6 +53,11 @@ namespace Ereader {
 
             Config config = deserializer.Deserialize<Config>(yamlInput);
 
+            // If not set use a default location for book library
+            if (config.BookLibraryPath == ""){
+                config.BookLibraryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            }
+
             return config;
         }
 
@@ -69,6 +73,11 @@ namespace Ereader {
             private set{
                 linesPerPage = value;
             }
+        }
+
+        public bool PdfImportAsImages{
+            get{ return pdfImportAsImages; }
+            private set{ pdfImportAsImages = value; }
         }
     }
 }
