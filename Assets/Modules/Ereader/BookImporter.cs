@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+using System.Runtime.InteropServices;
 using SimpleFileBrowser;
 using UnityEditor;
 using UnityEngine;
@@ -10,7 +11,41 @@ namespace Ereader{
     public class BookImporter : MonoBehaviour {
         
         void Start() {
-            FileBrowser.SetFilters(false, new FileBrowser.Filter( ".txt", ".pdf"));
+            FileBrowser.SetFilters(false, new FileBrowser.Filter( "Books", ".txt", ".pdf" ));
+        }
+
+        private void UpdateLib(string bookTitle){
+            string libDir = Config.Instance.BookLibraryPath  + "/VReader";
+            string bookLog = libDir + "/book-log.txt";
+
+            if (!File.Exists(bookLog)) {
+                File.Create(bookLog).Dispose();
+            }
+            
+            using (StreamWriter sw = File.AppendText(bookLog)){
+                sw.WriteLine(bookTitle);
+            }	
+        }
+
+        private bool DoesLibraryContain(string bookTitle) {
+            string libDir = Config.Instance.BookLibraryPath  + "/VReader";
+            string bookLog = libDir + "/book-log.txt";
+            if (!File.Exists(bookLog)){
+                return false;
+            }
+            
+            StreamReader file = new StreamReader(bookLog);  
+            
+            string line;  
+            while((line = file.ReadLine()) != null) {
+                if (line == bookTitle){
+                    file.Close();  
+                    return true;
+                }
+            }  
+  
+            file.Close();
+            return false;
         }
         
         // Entry point - Brings up file browser where user can select a file meeting filter criteria.
@@ -51,8 +86,11 @@ namespace Ereader{
         }
 
         public void Import(string path){
-
             BookFormat bookFormat = DetermineFormat(path);
+            string title = GetTitleFromPath(path);
+            if (DoesLibraryContain(title)){
+                return; // todo - reimport or skip?
+            }
             
             switch(bookFormat) {
                     
@@ -73,25 +111,30 @@ namespace Ereader{
                 default:
                     throw new InvalidBookFormatException("Unable to determine book format for path " + path);
             }
+            UpdateLib(title);
         }
 
         private void ImportDotText(string path) {
-            string[] lines = File.ReadAllLines(path);
-            string.Join("\n", lines);
+            string outputDir = GenerateDirs(path);
+            string title = GetTitleFromPath(path);
+            
+            BookInfoMapper.GenerateMapping(outputDir, ".txt", path, title);
+            CopyOriginal(path, outputDir + "/" + title + ".txt");
         }
         
         private void ImportPdf(string path){
             string outputDir = GenerateDirs(path);
-            
+            string title = GetTitleFromPath(path);
+             
             PdfConversion.ToJpegs(path, outputDir + "/" + "pages/");
+            BookInfoMapper.GenerateMapping(outputDir, ".pdf", path, title);
+            CopyOriginal(path, outputDir + "/" + title + ".pdf");
         }
 
         // Generates required directories or skips if already exists
         private string GenerateDirs(string path) {
-            
             string imageOutputPath = Config.Instance.BookLibraryPath;
             string bookTitle = GetTitleFromPath(path);
-            
             string libDir = imageOutputPath + "/VReader";
             string outputDir = libDir + "/" + bookTitle;
             
@@ -110,15 +153,17 @@ namespace Ereader{
                 Directory.CreateDirectory(outputDir + "/" + "pages");
             }
             
-            return outputDir + "/" + "pages/";
+            return outputDir;
         }
 
         private void ImportPdfInteractive(string path) {
             // todo
+            
         }
 
         private string GetTitleFromPath(string path) {
             string[] pathParts = path.Split('.');
+            
             if (pathParts.Length < 2){
                 throw new InvalidBookFormatException("Invalid book format. Must include extension");
             }
@@ -127,8 +172,14 @@ namespace Ereader{
             string[] filenameParts = filename.Split('/');
             return filenameParts[filenameParts.Length - 1];
         }
-    }
 
+        // Backup original document so it can be re-imported if original is deleted - todo option to switch this off by preference
+        private void CopyOriginal(string origin, string destination){
+            File.Copy(origin, destination);
+        }
+        
+    }
+    
     public class InvalidBookFormatException : Exception {
         public InvalidBookFormatException(string message) : base(message){}
     }
