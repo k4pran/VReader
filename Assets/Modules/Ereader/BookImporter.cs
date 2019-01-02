@@ -118,7 +118,7 @@ namespace Ereader{
             string outputDir = GenerateDirs(path);
             string title = GetTitleFromPath(path);
             
-            BookInfoMapper.GenerateMapping(outputDir, ".txt", path, title);
+            BookInfoMapper.SerializeInfo(outputDir, BookFormat.TXT, path, title);
             CopyOriginal(path, outputDir + "/" + title + ".txt");
         }
         
@@ -127,7 +127,7 @@ namespace Ereader{
             string title = GetTitleFromPath(path);
              
             PdfConversion.ToJpegs(path, outputDir + "/" + "pages/");
-            BookInfoMapper.GenerateMapping(outputDir, ".pdf", path, title);
+            BookInfoMapper.SerializeInfo(outputDir, BookFormat.PDF, path, title);
             CopyOriginal(path, outputDir + "/" + title + ".pdf");
         }
 
