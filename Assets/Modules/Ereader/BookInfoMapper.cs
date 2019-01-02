@@ -1,45 +1,41 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using UnityEngine;
 using YamlDotNet.RepresentationModel;
+using YamlDotNet.Samples.Helpers;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace Ereader{
     
     public class BookInfoMapper {
 
-        public static void GenerateMapping(string outputPath, string bookType, string location, string title) {
+        public static void SerializeInfo(string outputPath, BookFormat bookType, string location, string title) {
             
-            var stream = new YamlStream (
-                new YamlDocument(
-                    new YamlMappingNode(
-                        new YamlScalarNode("type"), new YamlScalarNode(bookType),
-                        new YamlScalarNode("origin"), new YamlScalarNode(location),
-                        new YamlScalarNode("title"), new YamlScalarNode(title)
-                    )
-                )
-            );
-            
-            using (TextWriter writer = File.CreateText(outputPath + "/info.yaml"))
-                stream.Save(writer, false);
+            BookInfo bookInfo = new BookInfo(title, bookType, location);
+            var serializer = new SerializerBuilder().Build();
+            var yaml = serializer.Serialize(bookInfo);
+            File.WriteAllText(outputPath + "/info.yaml", yaml);
         }
 
-
-        public static void GetMapping(string bookTitle) {
-                        
-            string configPath = Directory.GetCurrentDirectory() + "/Assets/Books/" + bookTitle;
-            string fileContent;
-            FileStream fileStream = new FileStream(configPath, FileMode.Open, FileAccess.Read);
+        public static BookInfo DeserializeInfo(string title) {
+            
+            string bookPath = Config.Instance.BookLibraryPath + "/VReader/"  + title + "/info.yaml";
+            string bookStr;
+            FileStream fileStream = new FileStream(bookPath, FileMode.Open, FileAccess.Read);
             using (StreamReader streamReader = new StreamReader(fileStream, Encoding.UTF8)) {
-                fileContent = streamReader.ReadToEnd();
+                bookStr = streamReader.ReadToEnd();
             }
             
-            var yaml = new YamlStream();
-            yaml.Load(new StringReader(fileContent));
-            
-            var mapping =
-                (YamlMappingNode)yaml.Documents[0].RootNode;
-            
+            StringReader yamlInput = new StringReader(bookStr);
+            Deserializer deserializer = new DeserializerBuilder()
+                .WithNamingConvention(new CamelCaseNamingConvention())
+                .Build();
+
+            BookInfo bookInfo = deserializer.Deserialize<BookInfo>(yamlInput);
+
+            return bookInfo;
         }
-        
     }
 }
