@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using TMPro;
@@ -7,8 +8,9 @@ using UnityEngine;
 namespace Ereader{
     public class BasicBook : Book {
         
-        private string bookPath;
         private List<Page> pages;
+        private string bookName;
+        private string[] lines;
         private int linesPerPage;
         private int pageIndLeft;
         private int pageIndRight;
@@ -20,8 +22,10 @@ namespace Ereader{
         private Page nextPageLeft;
         private Page nextPageRight;
 
-        public BasicBook(string bookPath){
-            this.bookPath = bookPath;
+        public BasicBook(string bookName){
+            this.bookName = bookName;
+
+            lines = File.ReadAllLines(Config.Instance.BookLibraryPath + "/VReader/" + bookName + "/" + bookName  + ".txt");
             pages = new List<Page>();
             pageIndLeft = -1; // Back side of front cover
             pageIndRight = 0;
@@ -37,10 +41,10 @@ namespace Ereader{
             if (nextPageLeft != null) nextPageLeft.Disable();
             if (nextPageRight != null) nextPageRight.Disable();
 
-            prevPageLeft = PageIndLeft - 2 >= 0 ? Pages[PageIndLeft - 2] : null;
-            prevPageRight = PageIndRight - 2 >= 0 ? Pages[pageIndRight - 2] : null;
-            nextPageLeft = PageIndLeft + 2 < Pages.Count && PageIndLeft + 2 >= 0 ? Pages[pageIndLeft + 2] : null;
-            nextPageRight = PageIndRight + 2 < Pages.Count && PageIndRight + 2 >= 0 ? Pages[pageIndRight + 2] : null;
+            prevPageLeft = PageIndLeft - 2 >= 0 ? GetPages()[PageIndLeft - 2] : null;
+            prevPageRight = PageIndRight - 2 >= 0 ? GetPages()[pageIndRight - 2] : null;
+            nextPageLeft = PageIndLeft + 2 < GetPages().Count && PageIndLeft + 2 >= 0 ? GetPages()[pageIndLeft + 2] : null;
+            nextPageRight = PageIndRight + 2 < GetPages().Count && PageIndRight + 2 >= 0 ? GetPages()[pageIndRight + 2] : null;
             
             if (prevPageLeft != null) prevPageLeft.Enable();
             if (prevPageRight != null) prevPageRight.Enable();
@@ -50,9 +54,8 @@ namespace Ereader{
             GetCurrentPageLeft().Enable();
             GetCurrentPageRight().Enable();
         }
-
-        public void LoadBook(){
-            string[] lines = new []{""}; // todo fix - temp to make it run
+                
+        public override void LoadBook() {
             StringBuilder sb = new StringBuilder();
             int lineNum = 0;
             int pageNum = 1;
@@ -75,6 +78,11 @@ namespace Ereader{
             }
             Display();
         }
+
+        public override List<Page> GetPages(){
+            return pages;
+        }
+        
         protected Page ConstructPage(TextMeshProUGUI tmp, string objName, int pageNum, string text){
             Page page = new Page(tmp, objName, pageNum);
             Vector2 preferredValues = tmp.GetPreferredValues(text);
@@ -169,13 +177,8 @@ namespace Ereader{
             return pages.Count;
         }
 
-        public string BookPath{
-            get{ return bookPath; }
-            set{ bookPath = value; }
-        }
-
-        public List<Page> Pages{
-            get{ return pages; }
+        public string BookName{
+            get{ return bookName; }
         }
 
         public int LinesPerPage{

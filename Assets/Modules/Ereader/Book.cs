@@ -11,6 +11,8 @@ namespace Ereader{
         private float paddingRight = 20;
 
         abstract public void Display();
+        abstract public void LoadBook();
+        abstract public List<Page> GetPages();
         abstract public void AddPage(Page page);
         abstract public void Remove(Page page);
         abstract public void Remove(int index);
@@ -21,7 +23,7 @@ namespace Ereader{
         abstract public void GoTo(int pageNumber);
         abstract public int PageCount();
         abstract public int CurrentPageNum();
-
+        
         public float PaddingTop{
             get{ return paddingTop; }
             set{ paddingTop = value; }
