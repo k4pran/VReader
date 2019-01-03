@@ -39,8 +39,8 @@ namespace Ereader {
         private static Config Deserialize(){
 
             // todo better option as Resources.Load()?
-            String configPath = Directory.GetCurrentDirectory() + "/Assets/Modules/Ereader/config.yaml";
-            String configStr;
+            string configPath = Directory.GetCurrentDirectory() + "/Assets/Modules/Ereader/config.yaml";
+            string configStr;
             FileStream fileStream = new FileStream(configPath, FileMode.Open, FileAccess.Read);
             using (StreamReader streamReader = new StreamReader(fileStream, Encoding.UTF8)) {
                 configStr = streamReader.ReadToEnd();
