@@ -16,6 +16,7 @@ namespace Ereader {
         
         // Properties
         private String bookLibraryPath;
+        private String applicationName;
         private int linesPerPage;
         private bool pdfImportAsImages;
 
@@ -66,6 +67,11 @@ namespace Ereader {
             private set{
                 bookLibraryPath = value;
             }
+        }
+
+        public string ApplicationName {
+            get { return applicationName; }
+            private set { applicationName = value; }
         }
 
         public int LinesPerPage{

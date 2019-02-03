@@ -1,4 +1,6 @@
+#If empty VReader will override and assume a default location
 bookLibraryPath: ''
 #Only for .txt formats with no explicit lines per page
 linesPerPage: 26
 pdfImportAsImages: 'true'
+applicationName: 'VReader'

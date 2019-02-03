@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
@@ -36,6 +37,37 @@ namespace Ereader{
             BookInfo bookInfo = deserializer.Deserialize<BookInfo>(yamlInput);
 
             return bookInfo;
+        }
+
+        public static List<BookInfo> DeserializeAll() {
+            List<BookInfo> allBooks = new List<BookInfo>();
+            HashSet<string> bookNames = GetBookNames();
+
+            foreach(string bookName in bookNames) {
+                allBooks.Add(DeserializeInfo(bookName));
+            }
+
+            return allBooks;
+        }
+        
+        public static HashSet<string> GetBookNames() {
+            HashSet<string> bookNames = new HashSet<string>();
+            
+            string libDir = Config.Instance.BookLibraryPath + "/VReader";
+            string bookLog = libDir + "/book-log.txt";
+            // Empty library - lib directory created on first import
+            if (!Directory.Exists(libDir) || !File.Exists(bookLog)) {
+                return bookNames;
+            }
+            
+            StreamReader file = new StreamReader(bookLog);
+            string line;
+            while((line = file.ReadLine()) != null) {
+                if (line.Length > 0) bookNames.Add(line);
+            }  
+            
+            Debug.Log("Found " + bookNames.Count + " books in library log");
+            return bookNames;
         }
     }
 }

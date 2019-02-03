@@ -5,6 +5,7 @@
         public string title     { get; private set; }
         public BookFormat format  { get; private set; }
         public string origin    { get; private set; }
+        public string thumbnailPath { get; private set; }
 
         public BookInfo(){}
 

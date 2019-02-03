@@ -67,7 +67,7 @@ namespace Ereader {
             }  
         }
 
-        public void LoadLibrary(){
+        public void LoadLibrary() {
             string libDir = Config.Instance.BookLibraryPath + "/VReader";
             string bookLog = libDir + "/book-log.txt";
 

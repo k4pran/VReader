@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ereader{
+namespace Ereader {
+    
     abstract public class Book {
 
         private DynamicPageController dynamicPageController;
@@ -10,36 +11,39 @@ namespace Ereader{
         private float paddingLeft = 20;
         private float paddingRight = 20;
 
-        abstract public void Display();
         abstract public void LoadBook();
+        abstract public void Display();
         abstract public List<Page> GetPages();
+        
         abstract public void AddPage(Page page);
         abstract public void Remove(Page page);
         abstract public void Remove(int index);
-        abstract public Page PageAt(int index);
-        abstract public Page GetCurrentPageLeft();
+        
+        abstract public void GoTo(int pageNumber);
         abstract public void Next();
         abstract public void Back();
-        abstract public void GoTo(int pageNumber);
+        
+        abstract public Page PageAt(int index);
+        abstract public Page GetCurrentPageLeft();
         abstract public int PageCount();
         abstract public int CurrentPageNum();
         
-        public float PaddingTop{
+        public float PaddingTop {
             get{ return paddingTop; }
             set{ paddingTop = value; }
         }
 
-        public float PaddingBottom{
+        public float PaddingBottom {
             get{ return paddingBottom; }
             set{ paddingBottom = value; }
         }
 
-        public float PaddingLeft{
+        public float PaddingLeft {
             get{ return paddingLeft; }
             set{ paddingLeft = value; }
         }
 
-        public float PaddingRight{
+        public float PaddingRight {
             get{ return paddingRight; }
             set{ paddingRight = value; }
         }
