@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace Ereader {
     
+    // Responsible for importing books into users library
+    // By default it will also make copies of the book file and image thumbnail so that it doesn't affect the library if
+    // the book has been deleted.
     public class BookImporter : MonoBehaviour {
 
         public string currentBookTitle;
@@ -16,6 +19,7 @@ namespace Ereader {
             
         }
 
+        // Updates library to track books available in library
         private void UpdateLib(string bookTitle) {
             string libDir = Config.Instance.BookLibraryPath + "/" + Config.Instance.ApplicationName;
             string bookLog = libDir + "/book-log.txt";
@@ -29,6 +33,7 @@ namespace Ereader {
             }
         }
 
+        // Checks a book is in library
         private bool DoesLibraryContain(string bookTitle) {
             string libDir = Config.Instance.BookLibraryPath + "/" + Config.Instance.ApplicationName;
             string bookLog = libDir + "/book-log.txt";
@@ -57,6 +62,7 @@ namespace Ereader {
             StartCoroutine(ShowLoadDialogBook());
         }
         
+        // Select an image thumbnail for the current book that will be displayed in the library
         public void UserSelectThumbnail() {
             FileBrowser.SetFilters(false, new FileBrowser.Filter("Image", ".jpeg", ".png", ".jpg"));
             StartCoroutine(ShowLoadDialogImage());
@@ -102,6 +108,7 @@ namespace Ereader {
             }
         }
 
+        // Perform some initial work then delegate the remaining tasks to specific methods based on book format
         public void Import(string path) {
             BookFormat bookFormat = DetermineFormat(path);
             string title = GetTitleFromPath(path);
@@ -138,6 +145,7 @@ namespace Ereader {
                 return;
             }
             BookInfo bookInfo = BookInfoMapper.DeserializeInfo(currentBookTitle);
+            bookInfo.thumbnailPath = path;
             
             string[] pathParts = path.Split('.');
             if (pathParts.Length < 2) {
@@ -146,13 +154,17 @@ namespace Ereader {
             string ext = pathParts[pathParts.Length - 1];
             CopyOriginal(path, Config.Instance.BookLibraryPath + "/" + Config.Instance.ApplicationName + "/" + 
                                currentBookTitle + "/" + currentBookTitle + "-thumb." + ext);
+
+            string outputPath = Config.Instance.BookLibraryPath + "/" + Config.Instance.ApplicationName + "/" +
+                                bookInfo.title + "/info.yaml"; 
+            BookInfoMapper.SerializeInfo(outputPath, bookInfo);
         }
 
         private void ImportDotText(string path) {
             string outputDir = GenerateDirs(path);
             string title = GetTitleFromPath(path);
 
-            BookInfoMapper.SerializeInfo(outputDir, BookFormat.TXT, path, title);
+            BookInfoMapper.SerializeInfo(outputDir + "/info.yaml", BookFormat.TXT, path, title);
             CopyOriginal(path, outputDir + "/" + title + ".txt");
         }
 
@@ -161,7 +173,7 @@ namespace Ereader {
             string title = GetTitleFromPath(path);
 
             PdfConversion.ToJpegs(path, outputDir + "/" + "pages/");
-            BookInfoMapper.SerializeInfo(outputDir, BookFormat.PDF, path, title);
+            BookInfoMapper.SerializeInfo(outputDir + "/info.yaml", BookFormat.PDF, path, title);
             CopyOriginal(path, outputDir + "/" + title + ".pdf");
         }
 
@@ -208,7 +220,7 @@ namespace Ereader {
 
         // Backup original document so it can be re-imported if original is deleted - todo option to switch this off by preference
         private void CopyOriginal(string origin, string destination) {
-            File.Copy(origin, destination);
+            File.Copy(origin, destination, true);
         }
 
         public string CurrentBookTitle {
